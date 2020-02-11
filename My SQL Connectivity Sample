@@ -1,0 +1,195 @@
+Please note below the MYSQL with R2DBC – code form Sooriya. Also, please see below for the recording / downloading link of yesterday’s session. 
+
+Pass code for the below link is Verizon*0129
+
+Streaming recording link: https://cognizantcorp.webex.com/cognizantcorp/ldr.php?RCID=dc1ad895412e449fabbf3298a0f86115  
+Download recording link:  https://cognizantcorp.webex.com/cognizantcorp/lsr.php?RCID=2ac30f7d06ba489682d5e3b3875b0b95
+
+MYSQL with R2DBC – code:
+
+package com.example.books;
+
+import java.nio.charset.StandardCharsets;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.r2dbc.config.AbstractR2dbcConfiguration;
+import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories;
+import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.github.jasync.r2dbc.mysql.JasyncConnectionFactory;
+import com.github.jasync.sql.db.mysql.pool.MySQLConnectionFactory;
+import com.github.jasync.sql.db.mysql.util.URLParser;
+
+import io.r2dbc.spi.ConnectionFactory;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+@SpringBootApplication
+public class BookappApplication {
+                public static void main(String[] args) {
+                                SpringApplication.run(BookappApplication.class, args);
+                }
+}
+
+@RestController
+class BookController {
+                @Autowired
+                BookRepository repo;
+                
+                @GetMapping(value="/books")
+                public Flux<Book> getAllBooks() {
+                                return repo.findAll();
+                }
+                
+                @GetMapping(value="/book/{id}")
+                public Mono<Book> findBookById(@PathVariable Long id) {
+                                return repo.findById(id);
+                }
+}
+
+//cached_ssh_caching ssa/ssh+password - database authentication method is not available/enabled/applicable error
+//my.ini - C:\ProgramData\MySQL\MySQL Server 8.0 folder - [mysqld] - default_authentication_plugin=mysql_native_password
+
+@Table("books")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+class Book{
+                @Id
+                private Long id;
+                private String title;
+                private String author;
+}
+
+interface BookRepository extends ReactiveCrudRepository<Book, Long>{
+}
+
+@Configuration
+@EnableR2dbcRepositories
+class MySQLConfiguration extends AbstractR2dbcConfiguration{
+                @Override
+                @Bean
+                public ConnectionFactory connectionFactory() {
+                                String url ="mysql://admin:admin@localhost:3306/bookdb";
+                                return new JasyncConnectionFactory(new MySQLConnectionFactory(URLParser.INSTANCE.parseOrDie(url, StandardCharsets.UTF_8)));
+                }
+}
+
+
+
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+       <modelVersion>4.0.0</modelVersion>
+       <parent>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-starter-parent</artifactId>
+              <version>2.2.0.M3</version>
+              <relativePath/> <!-- lookup parent from repository -->
+       </parent>
+       <groupId>com.books</groupId>
+       <artifactId>bookapp</artifactId>
+       <version>0.0.1-SNAPSHOT</version>
+       <name>bookapp</name>
+       <description>Demo project for Spring Boot</description>
+
+       <properties>
+              <java.version>1.8</java.version>
+       </properties>
+
+       <dependencies>
+              <dependency>
+                     <groupId>org.springframework.boot</groupId>
+                     <artifactId>spring-boot-starter-webflux</artifactId>
+              </dependency>
+              <dependency>
+                     <groupId>org.springframework.data</groupId>
+                     <artifactId>spring-data-r2dbc</artifactId>
+                     <version>1.0.0.M2</version>
+              </dependency>
+              <dependency>
+                     <groupId>com.github.jasync-sql</groupId>
+                     <artifactId>jasync-r2dbc-mysql</artifactId>
+                     <version>0.9.53</version>
+              </dependency>
+
+              <dependency>
+                     <groupId>org.projectlombok</groupId>
+                     <artifactId>lombok</artifactId>
+                     <optional>true</optional>
+              </dependency>
+              <dependency>
+                     <groupId>org.springframework.boot</groupId>
+                     <artifactId>spring-boot-starter-test</artifactId>
+                     <scope>test</scope>
+                     <exclusions>
+                           <exclusion>
+                                  <groupId>org.junit.vintage</groupId>
+                                  <artifactId>junit-vintage-engine</artifactId>
+                           </exclusion>
+                     </exclusions>
+              </dependency>
+              <dependency>
+                     <groupId>io.projectreactor</groupId>
+                     <artifactId>reactor-test</artifactId>
+                     <scope>test</scope>
+              </dependency>
+       </dependencies>
+       
+       <repositories>
+              <repository>
+                     <id>spring-milestone</id>
+                     <url>https://repo.spring.io/libs-milestone</url>
+              </repository>
+              <repository>
+                     <id>spring-snapshot</id>
+                     <url>https://repo.spring.io/libs-snapshot</url>
+              </repository>
+              <repository>
+                     <id>jcenter</id>
+                     <url>https://jcenter.bintray.org</url>
+              </repository>
+       </repositories>
+
+       <pluginRepositories>
+              <pluginRepository>
+                     <id>spring-milestone</id>
+                     <url>https://repo.spring.io/libs-milestone</url>
+              </pluginRepository>
+              <pluginRepository>
+                     <id>spring-snapshot</id>
+                     <url>https://repo.spring.io/libs-snapshot</url>
+              </pluginRepository>
+              <pluginRepository>
+                     <id>jcenter</id>
+                     <url>https://jcenter.bintray.org</url>
+              </pluginRepository>
+       </pluginRepositories>
+
+       <build>
+              <plugins>
+                     <plugin>
+                           <groupId>org.springframework.boot</groupId>
+                           <artifactId>spring-boot-maven-plugin</artifactId>
+                     </plugin>
+              </plugins>
+       </build>
+
+</project>
+
+default_authentication_plugin=mysql_native_password
+C:\ProgramData\MySQL\MySQL Server 8.0\my.ini
