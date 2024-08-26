@@ -11,7 +11,7 @@
 		<java.version>1.8</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
-		<springfox-version>2.9.2</springfox-version>
+		<springfox-version>2.10.0</springfox-version>
 		<apachepoi-version>4.0.1</apachepoi-version>
 		<r2dbc-h2.version>0.9.0.BUILD-SNAPSHOT</r2dbc-h2.version>
 	</properties>
